@@ -1,4 +1,4 @@
-import { User } from "../types";
+import { User } from "../types/index";
 import constate from "constate";
 import { useState } from "react";
 
@@ -11,6 +11,6 @@ const [AuthProvider, useAuth] = constate(() => {
   };
 });
 
-export { AuthProvider };
+export  { AuthProvider };
 
 export default useAuth;

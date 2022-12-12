@@ -1,3 +1,5 @@
+import React from "react";
+
 import {
   Col,
   Container,
@@ -11,7 +13,7 @@ import {
   CardBody,
 } from "reactstrap";
 import Lottie from "react-lottie";
-import LoginLottie from "../lotties/login.json";
+import LottieLogin from "../lotties/login.json";
 import { Form, Formik, FormikHelpers, FormikProps } from "formik";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -31,10 +33,10 @@ const initialValues: FormValues = {
   password: "",
 };
 
-// TODO: Deixe os campos obrigatórios com uma mensagem o "<Campo> é obrigatório"
+
 const FormSchema = Yup.object().shape({
-  username: Yup.string(),
-  password: Yup.string(),
+  username: Yup.string().required("Nome de usuário obrigatório"),
+  password: Yup.string().required("Senha obrigatória"),
 });
 
 const Login = () => {
@@ -89,7 +91,7 @@ const Login = () => {
   // TODO: Corrija o layout
 
   return (
-    <div className="bg-dark d-none">
+    <div className="bg-dark">
       <div className="animate__animated animate__fadeIn">
         <Formik
           initialValues={initialValues}
@@ -105,17 +107,15 @@ const Login = () => {
             handleSubmit,
           }: FormikProps<FormValues>) => (
             <Container className="min-vh-100 d-flex align-items-center justify-content-center">
-              <Card style={{ width: "100%", maxWidth: 800 }}>
-                <CardBody>
-                  <Row className="align-items-center">
-                    {/* TODO: Deixe os blocos lado a lado a partir do tamanho MD */}
-
-                    <Col xs={12} className="d-none d-md-flex">
+              <Card style={{ width: "50%", maxWidth: 800, minWidth:500}}>
+                <CardBody className=" d-md-flex flex-md-row ">
+                  <Row>
+                    <Col xs={12} md={6} className="d-block d-md-flex">
                       <Lottie
                         options={{
                           loop: true,
                           autoplay: true,
-                          animationData: LoginLottie,
+                          animationData: LottieLogin,
                           rendererSettings: {
                             preserveAspectRatio: "xMidYMid slice",
                           },
@@ -123,20 +123,19 @@ const Login = () => {
                       />
                     </Col>
 
-                    <Col xs={12}>
-                      <Form onSubmit={handleSubmit}>
+                    <Col xs={12} md={6}>
+                      <Form className="d-flex flex-column align-items-center justify-content-center" onSubmit={handleSubmit}>
                         <h4 className="mb-3">
-                          <strong>Logue-se</strong>
+                          <strong>Entrar</strong>
                         </h4>
 
-                        {/* TODO: Adicione as mensagens de feedback nos inputs com o component <FormFeedback/> */}
-                        {/* TODO: Adicione margin bottom entre os inputs utilizando as classes do Bootstrap */}
+                     
                         <FormGroup className="w-50">
                           <Label className="form-label fs-6 fw-bolder text-dark">
                             Usuário
                           </Label>
                           <Input
-                            className=" form-control-solid"
+                            className="form-control-solid mb-2"
                             name="username"
                             type="text"
                             value={values.username}
@@ -148,14 +147,17 @@ const Login = () => {
                             valid={touched.username && !errors.username}
                             placeholder="Digite seu usuário"
                           />
+                           {errors.username && (
+                            <FormFeedback>{errors.username}</FormFeedback>
+                          )}
                         </FormGroup>
 
-                        <FormGroup className="w-25">
+                        <FormGroup className="w-50">
                           <Label className="form-label fs-6 fw-bolder text-dark">
                             Senha
                           </Label>
                           <Input
-                            className=" form-control-solid"
+                          className=" form-control-solid mb-2"
                             name="password"
                             type="password"
                             value={values.password}
@@ -167,9 +169,12 @@ const Login = () => {
                             valid={touched.password && !errors.password}
                             placeholder="Digite sua senha"
                           />
+                           {errors.password && (
+                            <FormFeedback>{errors.password}</FormFeedback>
+                          )}
                         </FormGroup>
 
-                        <div className="text-center text-lg-start mt-4 pt-2">
+                        <div className="text-center text-lg-center mt-2 pt-2">
                           {/* TODO: Adicione uma mensagem de carregando no botão utilizando a variavel isSubmitting */}
                           {/* TODO: Faça o botão de login ficar desabilitado enquanto o formulário não for válido */}
                           <Button type="submit" color="primary">

@@ -1,4 +1,4 @@
-import { Todo } from "../types";
+import { Todo } from "../types/index";
 import constate from "constate";
 import { useState } from "react";
 

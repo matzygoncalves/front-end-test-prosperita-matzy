@@ -1,3 +1,4 @@
+
 import {
   Col,
   Container,
@@ -15,8 +16,7 @@ import RegisterLottie from "../lotties/register.json";
 import { Form, Formik, FormikHelpers, FormikProps } from "formik";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { User } from "../types";
-
+import { User } from "../types/index";
 import * as Yup from "yup";
 import ApiService from "../services/api";
 
@@ -38,16 +38,14 @@ const initialValues: FormValues = {
   confirm_password: "",
 };
 
-// TODO: Garanta que todos os campos estão obrigatórios com uma mensagem o "<Campo> é obrigatório"
-// TODO: Valide o campo email com uma mensagem o "Email inválido" (use o yup email)
 
 const FormSchema = Yup.object().shape({
-  username: Yup.string(),
-  email: Yup.string(),
+  username: Yup.string().required("Nome de usuário obrigatório"),
+  email: Yup.string().required("Email obrigatório"),
   birthdate: Yup.date()
     .required("Data de nascimento é obrigatório")
     .max(new Date(), "Data de nascimento inválida"),
-  gender: Yup.string(),
+  gender: Yup.string().required("Por favor, selecione um gênero"),
   password: Yup.string().required("Senha é obrigatória"),
   confirm_password: Yup.string()
     .required("Confirmação de senha é obrigatória")
@@ -71,7 +69,7 @@ const Register = () => {
 
       navigate("/login");
 
-      toast.info("Cadastrado com sucesso, logue-se na plataforma...");
+      toast.info("Cadastrado com sucesso, entre na plataforma...");
     } catch (e) {
       toast.error("Erro ao realizar cadastro");
     }
@@ -275,7 +273,7 @@ const Register = () => {
                           <p className="small fw-bold mt-2 pt-1 mb-0">
                             Já possui uma conta?{" "}
                             <Link to="/login" className="link-danger">
-                              Logue-se
+                              Entrar
                             </Link>
                           </p>
                         </div>

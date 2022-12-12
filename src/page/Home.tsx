@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import React from "react";
 import { useEffect, useState } from "react";
 import { Form, Formik, FormikHelpers, FormikProps } from "formik";
 import { toast } from "react-toastify";
@@ -37,7 +38,7 @@ const TableCell = styled.td`
   min-width: 90px;
 `;
 
-const FAB = styled(Button)`
+const FAB = styled.button`
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -60,12 +61,12 @@ const initialValues: FormValues = {
   deadline: "",
 };
 
-// TODO: Deixe o campo title obrigatórios com uma mensagem o "<Campo> é obrigatório"
+
 // TODO: Deixe o campo deadline com uma mensagem de "Data inválida"
 // TODO: Valide se o campo deadline é maior ou igual a data atual
 
 const FormSchema = Yup.object().shape({
-  title: Yup.string(),
+  title: Yup.string().required("O Título Obrigatorio"),
   deadline: Yup.string(),
 });
 
@@ -85,7 +86,7 @@ const Home = () => {
     // TODO: Utilize o filter para filtrar as tarefas
     const filteredData = [];
 
-    todos.forEach((todo) => {
+    todos.filter((todo) => {
       if (todo.title.toLowerCase().includes(search.toLowerCase())) {
         filteredData.push(todo);
       }
@@ -94,16 +95,15 @@ const Home = () => {
     // TODO: Utilize o map para verificar se a tarefa está atrasada ou não e adicionar a propriedade late
     const mappedData = filteredData.map((todo) => todo);
 
-    // TODO: Utilize o filter para separar as tarefas concluídas e as tarefas não concluídas
 
     const todo = [];
     const done = [];
 
-    mappedData.forEach((todo) => {
-      if (todo.done) {
-        done.push(todo);
+    mappedData.filter((_todo) => {
+      if (_todo.done === true) {
+        done.push(_todo);
       } else {
-        todo.push(todo);
+        todo.push(_todo);
       }
     });
 
@@ -119,13 +119,15 @@ const Home = () => {
 
   // TODO: Crie a lógica da formatação da data para o formato dd/mm/yyyy, utilize split, reverse e join
   const formatDate = (date: string) => {
+   
+   
     return date;
   };
 
   const fetchData = async () => {
     try {
       const { data } = await ApiService.HttpGet({
-        route: `/users/$/todo`,
+        route: `/users/${user.id}/todo`,
       });
 
       // TODO: Deixe em ordem crescente pelo campo deadline
@@ -143,7 +145,7 @@ const Home = () => {
       // TODO: Exiba um modal de confirmação antes de deletar usando SweetAlert2
 
       await ApiService.HttpDelete({
-        route: `/users/${userID}/todo/${id}`,
+        route: `/users/${user.id}/todo/${id}`,
       });
 
       toast.success("Tarefa deletada com sucesso");
@@ -166,7 +168,7 @@ const Home = () => {
         cancelButtonText: "Cancelar",
         preConfirm: () => {
           return ApiService.HttpPut({
-            route: `/users/${user.id}/todo/${todoId}`,
+            route: `/users/${user.id}/todo/${id}`,
             body: {
               completed,
             },
@@ -196,7 +198,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    // fetchData();
+    fetchData();
   }, [user]);
 
   const handleFormSubmit = async (
@@ -207,7 +209,7 @@ const Home = () => {
 
     try {
       await ApiService.HttpPost({
-        route: `/users/todo`,
+        route: `/users/${user.id}/todo`,
         body: { ...values, userId: user.id, completed: false },
       });
 
@@ -271,7 +273,7 @@ const Home = () => {
                         )}
                       </Col>
 
-                      {/* TODO: Corrija o input de data */}
+                   
                       <Col xs={12} md={4}>
                         <Label className="form-label fs-6 fw-bolder text-dark">
                           Data
@@ -279,7 +281,7 @@ const Home = () => {
                         <Input
                           className="form-control-solid"
                           name="deadline"
-                          type="text"
+                          type="date"
                           value={values.deadline}
                           onChange={handleChange}
                           onBlur={handleBlur}
@@ -322,7 +324,7 @@ const Home = () => {
                     type="text"
                     placeholder="Digite aqui sua busca"
                     value={search}
-                    onChange={(e) => setSearch(e)}
+                    onChange={ (e) => setSearch(e.target.value)}
                   />
                 </Col>
               </Row>
@@ -345,7 +347,7 @@ const Home = () => {
                     <tbody>
                       {filteredTodo.map((todo) => (
                         <tr key={todo.id}>
-                          <TableCell>{todo.titulo}</TableCell>
+                          <TableCell>{todo.title}</TableCell>
                           <TableCell>{formatDate(todo.deadline)}</TableCell>
                           <TableCell>
                             {/* TODO: Corrija a lógica de atualização */}
@@ -407,7 +409,7 @@ const Home = () => {
                             <Button
                               color="danger"
                               size="sm"
-                              onClick={() => handleDelete()}
+                              onClick={() => handleDelete(todo.id)}
                             >
                               <FontAwesomeIcon icon={faTrash} />
                             </Button>
